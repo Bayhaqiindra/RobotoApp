@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    /* 1. Tambahkan "node" agar TS mengenali variabel lingkungan */
+    "types": ["vite/client", "node"], 
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting - Dibuat sedikit lebih fleksibel untuk development */
+    "strict": true,
+    "noUnusedLocals": false,      // Diubah ke false agar tidak error saat sedang coding
+    "noUnusedParameters": false,  // Diubah ke false agar tidak error saat sedang coding
+    "noFallthroughCasesInSwitch": true,
+
+    /* Interop */
+    "esModuleInterop": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    /* 2. Tambahkan ini untuk mendukung fitur terbaru ESM */
+    "allowArbitraryExtensions": true,
+    "moduleDetection": "force"
+  },
+  "include": ["src"],
+  /* 3. Pastikan TS menyertakan file definisi tipe buatan kita */
+  "files": ["src/vite-env.d.ts"] 
+}
