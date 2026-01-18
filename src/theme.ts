@@ -8,7 +8,7 @@ const theme: DeepPartial<ThemeType> = {
       icon: {
         dark: 'text'
       },
-      brand: '#7D4CDB',
+      brand: '#0040ff',
       control: 'brand',
       text: '#aaa',
       background: '#000'
