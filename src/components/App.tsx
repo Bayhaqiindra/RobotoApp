@@ -4,6 +4,8 @@ import { Grommet, Main, ThemeType } from 'grommet';
 import theme from '../theme';
 import Menu from './screens/Menu';
 import Level from './screens/Level';
+/* Import AudioProvider dari folder components */
+import { AudioProvider } from '../components/AudioProvider';
 
 const LevelSelection = lazy(() => import('./screens/LevelSelection'));
 const Settings = lazy(() => import('./screens/Settings'));
@@ -20,53 +22,56 @@ const App: React.FC = () => {
   
   return (
     <BrowserRouter>
-      <RouteDebugger />
-      <Grommet full theme={theme as ThemeType}>
-        <Main align="center">
-          <Suspense fallback={
-            <div style={{ color: 'white', padding: '20px', textAlign: 'center' }}>
-              <h2>Loading...</h2>
-            </div>
-          }>
-            <Switch>
-              <Route exact path="/">
-                {() => {
-                  console.log('📍 Rendering Menu route');
-                  return <Menu />;
-                }}
-              </Route>
-              
-              <Route path="/settings">
-                {() => {
-                  console.log('📍 Rendering Settings route');
-                  return <Settings />;
-                }}
-              </Route>
-              
-              <Route path="/select-level">
-                {() => {
-                  console.log('📍 Rendering LevelSelection route');
-                  return <LevelSelection />;
-                }}
-              </Route>
-              
-              <Route path="/level/:level">
-                {() => {
-                  console.log('📍 Rendering Level route');
-                  return <Level />;
-                }}
-              </Route>
-              
-              <Route>
-                {() => {
-                  console.log('📍 No match, redirecting to /');
-                  return <Redirect to="/" />;
-                }}
-              </Route>
-            </Switch>
-          </Suspense>
-        </Main>
-      </Grommet>
+      {/* Membungkus seluruh aplikasi agar musik tidak terputus saat navigasi */}
+      <AudioProvider>
+        <RouteDebugger />
+        <Grommet full theme={theme as ThemeType}>
+          <Main align="center">
+            <Suspense fallback={
+              <div style={{ color: 'white', padding: '20px', textAlign: 'center' }}>
+                <h2>Loading...</h2>
+              </div>
+            }>
+              <Switch>
+                <Route exact path="/">
+                  {() => {
+                    console.log('📍 Rendering Menu route');
+                    return <Menu />;
+                  }}
+                </Route>
+                
+                <Route path="/settings">
+                  {() => {
+                    console.log('📍 Rendering Settings route');
+                    return <Settings />;
+                  }}
+                </Route>
+                
+                <Route path="/select-level">
+                  {() => {
+                    console.log('📍 Rendering LevelSelection route');
+                    return <LevelSelection />;
+                  }}
+                </Route>
+                
+                <Route path="/level/:level">
+                  {() => {
+                    console.log('📍 Rendering Level route');
+                    return <Level />;
+                  }}
+                </Route>
+                
+                <Route>
+                  {() => {
+                    console.log('📍 No match, redirecting to /');
+                    return <Redirect to="/" />;
+                  }}
+                </Route>
+              </Switch>
+            </Suspense>
+          </Main>
+        </Grommet>
+      </AudioProvider>
     </BrowserRouter>
   );
 };

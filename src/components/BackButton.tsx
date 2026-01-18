@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { Button } from 'grommet';
 import { Previous } from 'grommet-icons';
 import styled from 'styled-components';
+/* Impor useAudio dari context global */
+import { useAudio } from './AudioProvider'; 
 
 const StyledGlassButton = styled(Button)`
   display: flex;
@@ -39,12 +41,19 @@ const StyledGlassButton = styled(Button)`
 
 export const BackButton: React.FC = () => {
   const history = useHistory();
+  /* Ambil fungsi playClick dari global AudioProvider */
+  const { playClick } = useAudio();
+
+  const handleBack = () => {
+    playClick();      // Mainkan suara klik
+    history.goBack(); // Kembali ke halaman sebelumnya
+  };
 
   return (
     <StyledGlassButton 
       icon={<Previous size="small" color="#4facfe" />} 
       label="Back" 
-      onClick={() => history.goBack()} 
+      onClick={handleBack} 
       plain 
     />
   );

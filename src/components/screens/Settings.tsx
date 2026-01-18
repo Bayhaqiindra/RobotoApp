@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Text } from 'grommet';
 import styled, { keyframes } from 'styled-components';
 import BackButton from '../BackButton';
+/* Impor useAudio dari AudioProvider global Anda */
+import { useAudio } from '../AudioProvider';
 
 // --- ANIMASI ---
 const gridTravel = keyframes`
@@ -51,6 +53,7 @@ const TopNavigation = styled.div`
   top: 40px;
   left: 40px;
   z-index: 20;
+  cursor: pointer;
 `;
 
 const ContentCenter = styled.div`
@@ -132,13 +135,17 @@ const Key = styled.span`
 `;
 
 export const Settings: React.FC = () => {
+  /* Ambil playClick dari AudioContext */
+  const { playClick } = useAudio();
+
   return (
     <Viewport>
       <Scene3D>
         <GroundGrid />
       </Scene3D>
 
-      <TopNavigation>
+      {/* Tambahkan playClick saat tombol kembali diklik */}
+      <TopNavigation onClick={() => playClick()}>
         <BackButton />
       </TopNavigation>
 

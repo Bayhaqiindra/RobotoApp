@@ -7,6 +7,8 @@ import styled, { keyframes } from 'styled-components';
 import { getLevelNames } from '../../levels';
 import { levelsSelectors, RootState } from '../../state';
 import BackButton from '../BackButton';
+/* Impor useAudio untuk efek suara klik global */
+import { useAudio } from '../AudioProvider';
 
 // --- ANIMASI ---
 const gridTravel = keyframes`
@@ -76,12 +78,9 @@ const Title = styled.h1`
   margin-bottom: 2.5rem;
   text-transform: uppercase;
   letter-spacing: 0.4rem;
-  
-  /* --- FIX TEKS TERPOTONG --- */
-  line-height: 1.4; /* Memberikan ruang antar baris yang cukup */
-  padding: 10px 0;   /* Memberikan ruang aman di atas dan bawah teks */
-  display: block;    /* Memastikan elemen mengambil ruang yang dibutuhkan */
-  
+  line-height: 1.4;
+  padding: 10px 0;
+  display: block;
   background: linear-gradient(to bottom, #ffffff, #4facfe);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -140,8 +139,12 @@ export const LevelSelection: React.FC = () => {
   const history = useHistory();
   const levelsState = useSelector((state: RootState) => state.levels);
   const levelNames = getLevelNames();
+  
+  /* Mengambil fungsi playClick dari context global */
+  const { playClick } = useAudio();
 
   const handleSelectLevel = (level: number) => {
+    playClick(); // Mainkan suara saat level dipilih
     history.push(`/level/${level}`);
     window.scrollTo(0, 0);
   };
@@ -152,7 +155,7 @@ export const LevelSelection: React.FC = () => {
         <GroundGrid />
       </Scene3D>
 
-      <TopNavigation>
+      <TopNavigation onClick={() => playClick()}>
         <BackButton />
       </TopNavigation>
 

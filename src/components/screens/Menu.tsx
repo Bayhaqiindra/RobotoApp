@@ -1,9 +1,10 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Button, Box } from 'grommet';
-/* Mengimpor ikon Gamepad untuk kesan stik PS */
 import { Play, Gamepad } from 'grommet-icons'; 
 import styled, { keyframes } from 'styled-components';
+/* Impor useAudio dari lokasi file AudioProvider Anda */
+import { useAudio } from '../AudioProvider';
 
 // --- ANIMASI SINEMATIK ---
 const gridTravel = keyframes`
@@ -126,6 +127,9 @@ const MenuButton = styled(Button)`
 `;
 
 const MenuComponent: React.FC<RouteComponentProps> = ({ history }) => {
+  /* Mengambil fungsi playClick dari AudioProvider global */
+  const { playClick } = useAudio();
+
   return (
     <Viewport>
       <Scene3D>
@@ -145,13 +149,18 @@ const MenuComponent: React.FC<RouteComponentProps> = ({ history }) => {
             primary
             icon={<Play size="medium" />}
             label="START MISSION"
-            onClick={() => history.push('/select-level')}
+            onClick={() => {
+              playClick(); // Mainkan SFX
+              history.push('/select-level');
+            }}
           />
-          {/* Tombol diperbarui dengan ikon Gamepad dan label baru */}
           <MenuButton 
             icon={<Gamepad size="medium" />}
             label="CONTROL CONFIG"
-            onClick={() => history.push('/settings')}
+            onClick={() => {
+              playClick(); // Mainkan SFX
+              history.push('/settings');
+            }}
             plain
           />
         </ActionGroup>

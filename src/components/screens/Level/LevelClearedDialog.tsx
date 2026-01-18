@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Box, Button, Text } from 'grommet';
-/* Mengimpor ikon yang lebih menarik untuk tema gaming */
 import { StatusGood, Apps } from 'grommet-icons'; 
 import styled, { keyframes } from 'styled-components';
 import { levelsSelectors, RootState } from '../../../state';
+/* Impor useAudio untuk suara kemenangan dan klik */
+import { useAudio } from '../../AudioProvider';
 
 // --- ANIMASI ---
 const slideIn = keyframes`
@@ -90,18 +91,32 @@ const ActionButton = styled(Button)`
 
 export const LevelClearedDialog: React.FC = () => {
   const history = useHistory();
+  const { playClick, playSuccess } = useAudio();
 
   const nextLevel = useSelector((state: RootState) => 
     levelsSelectors.getNextLevel(state.levels)
   );
+
+  // --- LOGIKA SUARA OTOMATIS ---
+  useEffect(() => {
+    // Memainkan suara kemenangan begitu dialog ini muncul
+    playSuccess();
+  }, [playSuccess]);
 
   const isGameFinished = nextLevel === undefined;
   const message = isGameFinished 
     ? 'MISSION ACCOMPLISHED: GAME COMPLETE' 
     : 'MISSION SUCCESSFUL';
 
-  const goToLevel = (level: number) => history.push(`/level/${level}`);
-  const goToLevelSelection = () => history.push('/select-level');
+  const goToLevel = (level: number) => {
+    playClick();
+    history.push(`/level/${level}`);
+  };
+
+  const goToLevelSelection = () => {
+    playClick();
+    history.push('/select-level');
+  };
 
   return (
     <DialogWrapper>
@@ -112,7 +127,6 @@ export const LevelClearedDialog: React.FC = () => {
           {nextLevel !== undefined && (
             <ActionButton 
               primary 
-              /* Ikon StatusGood memberikan kesan misi telah diverifikasi */
               icon={<StatusGood size="medium" />}
               label="Next Mission" 
               onClick={() => goToLevel(nextLevel)} 
@@ -120,7 +134,6 @@ export const LevelClearedDialog: React.FC = () => {
           )}
           
           <ActionButton 
-            /* Ikon Apps merepresentasikan grid seleksi level (menu utama) */
             icon={<Apps size="medium" color="#4facfe" />}
             label="Mission Selection" 
             onClick={goToLevelSelection} 

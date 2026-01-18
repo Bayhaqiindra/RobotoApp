@@ -4,6 +4,8 @@ import { Button } from 'grommet';
 import { Refresh } from 'grommet-icons';
 import styled from 'styled-components';
 import { levelsActions, levelsSelectors, RootState } from '../../../state';
+/* Impor useAudio dari context global */
+import { useAudio } from '../../AudioProvider'; 
 
 /**
  * RestartButton - Versi Glassmorphism Modern
@@ -13,7 +15,6 @@ const StyledGlassButton = styled(Button)`
   align-items: center;
   gap: 10px;
   background: rgba(79, 172, 254, 0.1);
-  /* Efek blur kaca di belakang tombol */
   backdrop-filter: blur(12px); 
   border: 1px solid rgba(79, 172, 254, 0.3);
   border-radius: 8px;
@@ -28,14 +29,12 @@ const StyledGlassButton = styled(Button)`
   &:hover {
     background: rgba(79, 172, 254, 0.25);
     border-color: #4facfe;
-    /* Efek cahaya biru saat diarahkan kursor */
     box-shadow: 0 0 20px rgba(79, 172, 254, 0.5); 
     transform: scale(1.05);
     
     svg {
       fill: #ffffff;
       stroke: #ffffff;
-      /* Animasi putar ikon saat hover */
       transform: rotate(-180deg);
     }
   }
@@ -58,18 +57,20 @@ const Wrapper = styled.div`
   top: 1rem;
   left: 1rem;
   z-index: 1000;
-  /* Memberikan bayangan halus pada area penempatan agar tidak 'flat' */
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
 `;
 
 export const RestartButton: React.FC = () => {
   const dispatch = useDispatch();
+  /* Ambil fungsi playClick dari global AudioProvider */
+  const { playClick } = useAudio();
 
   const level = useSelector((state: RootState) => 
     levelsSelectors.getSelectedLevel(state.levels)!
   );
 
   const handleRestart = () => {
+    playClick(); // Mainkan suara klik saat restart
     dispatch(levelsActions.selectLevel(level));
   };
 
