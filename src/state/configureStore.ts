@@ -1,5 +1,3 @@
-import { routerMiddleware } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { install, StoreCreator } from 'redux-loop';
 import createRootReducer, { State } from './ducks';
@@ -10,40 +8,34 @@ const PERSISTENT_SLICES: Array<keyof State> = ['levels', 'settings'];
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?? compose;
 
 /**
- * configureStore - Versi Vite Compatible
+ * configureStore - Versi Simplified (Tanpa Connected Router)
  */
 export function configureStore() {
   const persistedState = loadPersistedState(PERSISTENT_SLICES);
   
-  // Menggunakan basename kosong jika tidak dideploy di sub-folder
-  const history = createBrowserHistory();
-  
+  // Tidak lagi menggunakan routerMiddleware karena routing dihandle oleh BrowserRouter
   const enhancer = composeEnhancers(
-    applyMiddleware(routerMiddleware(history)),
     install() 
   );
 
   const enhancedCreateStore = createStore as StoreCreator;
   const store = enhancedCreateStore(
-    createRootReducer(history), 
+    createRootReducer(), // Tidak ada parameter - sudah diperbaiki!
     persistedState as State, 
     enhancer
   );
 
   setupStatePersistence(store, PERSISTENT_SLICES);
 
-  // PERBAIKAN: Menggunakan import.meta.hot untuk Vite sebagai pengganti module.hot
+  // Hot Module Replacement untuk development
   if (import.meta.hot) {
     import.meta.hot.accept('./ducks', () => {
-      const newRootReducer = createRootReducer(history);
+      const newRootReducer = createRootReducer(); // Tidak ada parameter
       store.replaceReducer(newRootReducer as any);
     });
   }
 
-  return {
-    store,
-    history
-  };
+  return { store };
 }
 
 export default configureStore;

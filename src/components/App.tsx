@@ -1,41 +1,73 @@
 import React, { lazy, Suspense } from 'react';
-import { Provider } from 'react-redux';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import { Grommet, Main, ThemeType } from 'grommet';
 import theme from '../theme';
-import { configureStore } from '../state';
 import Menu from './screens/Menu';
+import Level from './screens/Level';
 
-// Lazy loading tetap aman di v5
-const Level = lazy(() => import('./screens/Level'));
 const LevelSelection = lazy(() => import('./screens/LevelSelection'));
 const Settings = lazy(() => import('./screens/Settings'));
 
-const { store } = configureStore();
+// Debug component untuk melihat route yang aktif
+const RouteDebugger: React.FC = () => {
+  const location = useLocation();
+  console.log('🗺️ Current route:', location.pathname);
+  return null;
+};
 
 const App: React.FC = () => {
+  console.log('🚀 App component rendered');
+  
   return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <Grommet full theme={theme as ThemeType}>
-          <Main align="center">
-            <Suspense fallback={<div>Loading...</div>}>
-              {/* v5 menggunakan Switch, bukan Routes */}
-              <Switch>
-                {/* v5 menggunakan prop 'component' atau children, bukan 'element' */}
-                <Route exact path="/" component={Menu} />
-                <Route path="/settings" component={Settings} />
-                <Route path="/select-level" component={LevelSelection} />
-                <Route path="/level/:level" component={Level} />
-                
-                {/* v5 menggunakan Redirect, bukan Navigate */}
-                <Redirect to="/" />
-              </Switch>
-            </Suspense>
-          </Main>
-        </Grommet>
-      </BrowserRouter>
-    </Provider>
+    <BrowserRouter>
+      <RouteDebugger />
+      <Grommet full theme={theme as ThemeType}>
+        <Main align="center">
+          <Suspense fallback={
+            <div style={{ color: 'white', padding: '20px', textAlign: 'center' }}>
+              <h2>Loading...</h2>
+            </div>
+          }>
+            <Switch>
+              <Route exact path="/">
+                {() => {
+                  console.log('📍 Rendering Menu route');
+                  return <Menu />;
+                }}
+              </Route>
+              
+              <Route path="/settings">
+                {() => {
+                  console.log('📍 Rendering Settings route');
+                  return <Settings />;
+                }}
+              </Route>
+              
+              <Route path="/select-level">
+                {() => {
+                  console.log('📍 Rendering LevelSelection route');
+                  return <LevelSelection />;
+                }}
+              </Route>
+              
+              <Route path="/level/:level">
+                {() => {
+                  console.log('📍 Rendering Level route');
+                  return <Level />;
+                }}
+              </Route>
+              
+              <Route>
+                {() => {
+                  console.log('📍 No match, redirecting to /');
+                  return <Redirect to="/" />;
+                }}
+              </Route>
+            </Switch>
+          </Suspense>
+        </Main>
+      </Grommet>
+    </BrowserRouter>
   );
 };
 

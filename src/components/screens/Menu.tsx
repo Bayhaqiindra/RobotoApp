@@ -5,12 +5,28 @@ import { Play, SettingsOption } from 'grommet-icons';
 import Screen from '../Screen';
 
 /**
- * Menu Utama - Menggunakan withRouter untuk stabilitas v5
+ * Menu Utama - Debug Version
  */
 const MenuComponent: React.FC<RouteComponentProps> = ({ history }) => {
   
-  const handleStartGame = () => history.push('/select-level');
-  const handleOpenSettings = () => history.push('/settings');
+  const handleStartGame = () => {
+    console.log('🎮 Start Game clicked!');
+    console.log('Current location:', history.location.pathname);
+    console.log('Navigating to: /select-level');
+    
+    history.push('/select-level');
+    
+    // Cek apakah URL berubah setelah push
+    setTimeout(() => {
+      console.log('After push, location:', history.location.pathname);
+    }, 100);
+  };
+  
+  const handleOpenSettings = () => {
+    console.log('⚙️ Settings clicked!');
+    console.log('Current location:', history.location.pathname);
+    history.push('/settings');
+  };
 
   return (
     <Screen title="Sokobot">
@@ -30,6 +46,5 @@ const MenuComponent: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-// Membungkus komponen dengan withRouter agar mendapatkan akses ke object history
 export const Menu = withRouter(MenuComponent);
 export default Menu;
