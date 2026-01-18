@@ -1,48 +1,162 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Button } from 'grommet';
-import { Play, SettingsOption } from 'grommet-icons';
-import Screen from '../Screen';
+import { Button, Box } from 'grommet';
+/* Mengimpor ikon Gamepad untuk kesan stik PS */
+import { Play, Gamepad } from 'grommet-icons'; 
+import styled, { keyframes } from 'styled-components';
 
-/**
- * Menu Utama - Debug Version
- */
+// --- ANIMASI SINEMATIK ---
+const gridTravel = keyframes`
+  0% { transform: perspective(800px) rotateX(60deg) translateY(0); }
+  100% { transform: perspective(800px) rotateX(60deg) translateY(60px); }
+`;
+
+const glowPulse = keyframes`
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(79, 172, 254, 0.5)); }
+  50% { filter: drop-shadow(0 0 30px rgba(79, 172, 254, 0.8)); }
+`;
+
+const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+`;
+
+// --- STYLED COMPONENTS ---
+const Viewport = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #050a15; 
+  overflow: hidden;
+  position: relative;
+`;
+
+const Scene3D = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(circle at center, #101e3a 0%, #050a15 100%);
+`;
+
+const GroundGrid = styled.div`
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  bottom: -50%;
+  left: -50%;
+  background-image: 
+    linear-gradient(rgba(79, 172, 254, 0.2) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(79, 172, 254, 0.2) 1.5px, transparent 1.5px);
+  background-size: 60px 60px;
+  animation: ${gridTravel} 2s linear infinite;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 20%, transparent 80%);
+`;
+
+const CentralHub = styled.div`
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const TitleBlock = styled.div`
+  margin-bottom: 5rem;
+  animation: ${glowPulse} 4s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const BrandTitle = styled.h1`
+  font-family: 'Exo 2', 'Orbitron', sans-serif;
+  font-size: clamp(5rem, 15vw, 10rem);
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 0.8;
+  letter-spacing: -0.2rem;
+  background: linear-gradient(to bottom, #ffffff 0%, #4facfe 40%, #0077ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+`;
+
+const Subtitle = styled.div`
+  color: #4facfe;
+  letter-spacing: 0.2rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin: 2.5rem 0 0 0;
+  font-weight: 700;
+  opacity: 0.8;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 600px;
+`;
+
+const ActionGroup = styled(Box)`
+  gap: 1.5rem;
+  width: 380px;
+  animation: ${float} 4s ease-in-out infinite;
+`;
+
+const MenuButton = styled(Button)`
+  border: 1px solid rgba(79, 172, 254, 0.4);
+  background: rgba(10, 30, 60, 0.8);
+  padding: 20px 0;
+  border-radius: 4px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+  font-weight: 800;
+  letter-spacing: 3px;
+  
+  &:hover {
+    background: #4facfe;
+    color: #050a15;
+    box-shadow: 0 0 40px rgba(79, 172, 254, 0.7);
+    transform: scale(1.05);
+    border-color: #ffffff;
+    
+    svg { fill: #050a15; stroke: #050a15; }
+  }
+`;
+
 const MenuComponent: React.FC<RouteComponentProps> = ({ history }) => {
-  
-  const handleStartGame = () => {
-    console.log('🎮 Start Game clicked!');
-    console.log('Current location:', history.location.pathname);
-    console.log('Navigating to: /select-level');
-    
-    history.push('/select-level');
-    
-    // Cek apakah URL berubah setelah push
-    setTimeout(() => {
-      console.log('After push, location:', history.location.pathname);
-    }, 100);
-  };
-  
-  const handleOpenSettings = () => {
-    console.log('⚙️ Settings clicked!');
-    console.log('Current location:', history.location.pathname);
-    history.push('/settings');
-  };
-
   return (
-    <Screen title="Sokobot">
-      <Button 
-        primary
-        icon={<Play />} 
-        label="Start Game" 
-        onClick={handleStartGame} 
-        margin={{ bottom: 'small' }}
-      />
-      <Button 
-        icon={<SettingsOption />} 
-        label="Settings" 
-        onClick={handleOpenSettings} 
-      />
-    </Screen>
+    <Viewport>
+      <Scene3D>
+        <GroundGrid />
+      </Scene3D>
+      
+      <CentralHub>
+        <TitleBlock>
+          <BrandTitle>ROBOTO</BrandTitle>
+          <Subtitle>
+            PECAHKAN PUZZLE, SELESAIKAN MISI
+          </Subtitle>
+        </TitleBlock>
+
+        <ActionGroup>
+          <MenuButton 
+            primary
+            icon={<Play size="medium" />}
+            label="START MISSION"
+            onClick={() => history.push('/select-level')}
+          />
+          {/* Tombol diperbarui dengan ikon Gamepad dan label baru */}
+          <MenuButton 
+            icon={<Gamepad size="medium" />}
+            label="CONTROL CONFIG"
+            onClick={() => history.push('/settings')}
+            plain
+          />
+        </ActionGroup>
+      </CentralHub>
+    </Viewport>
   );
 };
 
