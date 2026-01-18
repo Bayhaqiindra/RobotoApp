@@ -1,12 +1,14 @@
 import React from 'react';
 import { useSelector, useStore, Provider } from 'react-redux';
 import { Canvas } from '@react-three/fiber';
-import { Color } from 'three';
+/* Impor Stars untuk efek angkasa yang nyata */
+import { Stars, Float } from '@react-three/drei'; 
+import { Color, FogExp2 } from 'three';
 import CameraControls from './CameraControls';
 import Map from './Map';
 
 /**
- * MyCanvas - Lightweight Enhanced Version
+ * MyCanvas - Versi Sky & Deep Space 3D
  */
 export const MyCanvas: React.FC = () => {
   const store = useStore();
@@ -15,45 +17,59 @@ export const MyCanvas: React.FC = () => {
     <Canvas
       shadows
       camera={{ 
-        fov: 60, 
-        position: [8, 8, 8],
+        fov: 50, 
+        position: [10, 10, 10], 
         near: 0.1,
         far: 1000
       }}
       style={{
-        background: 'linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%)',
+        /* Warna background deep space pekat */
+        background: '#020408', 
         height: '100%',
         position: 'absolute',
         top: 0,
         left: 0,
       }}
+      /* Menambahkan kabut atmosfer agar map terlihat melayang secara natural */
+      onCreated={({ scene }) => {
+        scene.fog = new FogExp2('#020408', 0.04);
+      }}
     >
       <Provider store={store}>
+        {/* --- LINGKUNGAN ANGKASA --- */}
+        <Stars 
+          radius={100} 
+          depth={50} 
+          count={7000} 
+          factor={4} 
+          saturation={0.5} 
+          fade 
+          speed={1} 
+        />
+
         <CameraControls />
         
         <group rotation={[-Math.PI / 2, 0, 0]}>
-          {/* Ambient Light - cahaya dasar */}
-          <ambientLight intensity={0.4} color="#b0c4de" />
+          {/* Ambient Light - cahaya dasar biru dingin */}
+          <ambientLight intensity={0.5} color="#4facfe" />
           
-          {/* Main directional light dengan shadow */}
+          {/* Main directional light - Cahaya matahari/bintang utama */}
           <directionalLight
             color={new Color('#ffffff')}
             castShadow
-            intensity={1.2}
-            position={[10, 10, 10]}
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
-            shadow-camera-near={0.5}
-            shadow-camera-far={50}
+            intensity={1.8}
+            position={[10, 20, 10]}
+            shadow-mapSize={[2048, 2048]}
           />
           
-          {/* Fill light dari samping */}
-          <directionalLight
-            color="#6a9bd8"
-            intensity={0.5}
-            position={[-5, 5, -5]}
+          {/* Rim Light - Cahaya aksen dari arah berlawanan untuk efek 3D kuat */}
+          <pointLight 
+            position={[-10, -5, -10]} 
+            intensity={2} 
+            color="#0077ff" 
           />
 
+          {/* Map utama tanpa garis pembantu */}
           <Map />
         </group>
       </Provider>
