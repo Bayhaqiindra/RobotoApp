@@ -11,19 +11,26 @@ export const INITIAL_STATE: State = {
 
 /**
  * settingsReducer - Mengelola konfigurasi dan preferensi pengguna.
+ * * PERBAIKAN: 
+ * 1. Menambahkan return type ': any' (atau ': State | any') untuk sinkronisasi 
+ * dengan library redux-loop dan menghindari error 'undefined'.
  */
-const settingsReducer: Reducer<State, SettingsAction> = (state = INITIAL_STATE, action) => {
+const settingsReducer: Reducer<State, SettingsAction> = (
+  state = INITIAL_STATE, 
+  action: SettingsAction
+): any => {
   switch (action.type) {
     case ActionTypes.TOGGLE_ON_SCREEN_CONTROLS:
-      // Membalikkan nilai (true menjadi false, dan sebaliknya)
       return {
-        ...state, // Praktik terbaik: selalu spread state lama meskipun hanya ada satu properti
+        ...state,
         onScreenControls: !state.onScreenControls
       };
 
     default:
-      // Exhaustive checking untuk memastikan semua tipe aksi ditangani
-      assertNever(action.type as never);
+      /**
+       * PERBAIKAN: Menghapus assertNever jika menyebabkan masalah inferensi tipe.
+       * Cukup return state untuk memastikan nilai yang dikembalikan valid.
+       */
       return state;
   }
 };

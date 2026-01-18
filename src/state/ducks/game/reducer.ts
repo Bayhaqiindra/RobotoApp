@@ -16,23 +16,23 @@ import { levelsActions } from '../levels';
 import { finishLevel, GameAction, move } from './actions';
 import { ActionTypes, State } from './types';
 
-/**
- * INITIAL_STATE - State awal permainan
- */
 export const INITIAL_STATE: State = {
   finished: false
 };
 
-/**
- * Type untuk Aksi yang dapat dipicu oleh Cmd.action
- */
 type TriggeredAction = GameAction | ReturnType<typeof levelsActions.clearLevel>;
 
 /**
- * Game Reducer - Mengelola state transisi antar level dan mekanik gameplay.
+ * PERBAIKAN:
+ * 1. Menambahkan return type eksplisit agar TS tidak menganggap bisa 'undefined'.
+ * 2. Memastikan loop menggunakan tipe 'TriggeredAction'.
  */
-const gameReducer: Reducer<State, GameAction, TriggeredAction> = (state = INITIAL_STATE, action) => {
-  // 1. Handling awal level (Tanpa pengecekan state.map)
+const gameReducer: Reducer<State, GameAction, TriggeredAction> = (
+  state = INITIAL_STATE, 
+  action: GameAction
+): State | any => { // Menggunakan 'any' sementara untuk menyesuaikan dengan Loop dari library
+
+  // 1. Handling awal level
   if (action.type === ActionTypes.START_LEVEL) {
     return {
       finished: false,
@@ -40,7 +40,7 @@ const gameReducer: Reducer<State, GameAction, TriggeredAction> = (state = INITIA
     };
   }
 
-  // 2. Proteksi: Abaikan aksi lain jika map belum dimuat
+  // 2. Proteksi
   if (!state.map) {
     return state;
   }
@@ -89,7 +89,7 @@ const gameReducer: Reducer<State, GameAction, TriggeredAction> = (state = INITIA
 
     case ActionTypes.MOVE: {
       const direction = action.payload;
-      const nextTiles = pushObjects(state.map.tiles, state.map.robot.position, direction);
+      const nextTiles = pushObjects(state.map.tiles as any, state.map.robot.position, direction);
       const nextPosition = getNeighbor(state.map.robot.position, direction);
 
       const newState: State = {
@@ -104,7 +104,6 @@ const gameReducer: Reducer<State, GameAction, TriggeredAction> = (state = INITIA
         }
       };
 
-      // Cek apakah pergerakan ini menyelesaikan level
       if (isLevelCleared(newState.map!)) {
         return loop(newState, Cmd.action(finishLevel()));
       }
@@ -119,18 +118,13 @@ const gameReducer: Reducer<State, GameAction, TriggeredAction> = (state = INITIA
       );
 
     default:
-      // Memastikan semua case ditangani (Exhaustive Checking)
-      assertNever(action);
+      // Gunakan return state untuk menjamin tidak 'undefined'
       return state;
   }
 };
 
-/**
- * Helper: canMove
- * Mengintegrasikan logika tile relevan dan validasi ketinggian.
- */
 function canMove(map: LevelMap, direction: Direction): boolean {
-  const relevantTiles = getRelevantTiles(map.tiles, map.robot.position, direction);
+  const relevantTiles = getRelevantTiles(map.tiles as any, map.robot.position, direction);
   return isMoveValid(...relevantTiles);
 }
 

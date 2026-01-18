@@ -1,18 +1,18 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'; // Gunakan useHistory, bukan useNavigate
 import { Button } from 'grommet';
 import { Previous } from 'grommet-icons';
 
 /**
- * BackButton - Versi Modern
- * Menggunakan hook useNavigate untuk kembali ke halaman sebelumnya.
+ * BackButton - Versi v5 Compatibility
+ * Menggunakan hook useHistory untuk kembali ke halaman sebelumnya.
  */
 export const BackButton: React.FC = () => {
-  const navigate = useNavigate();
+  const history = useHistory();
 
-  // navigate(-1) berfungsi sama seperti menekan tombol back pada browser
   const handleGoBack = () => {
-    navigate(-1);
+    // goBack() adalah fungsi standar untuk navigasi mundur di v5
+    history.goBack();
   };
 
   return (
@@ -20,6 +20,7 @@ export const BackButton: React.FC = () => {
       icon={<Previous />} 
       label="Back" 
       onClick={handleGoBack} 
+      plain // Menambah estetika jika diperlukan
     />
   );
 };

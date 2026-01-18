@@ -16,10 +16,6 @@ export type GameAction =
   | Action<ActionTypes.TURN_RIGHT>
   | Action<ActionTypes.MOVE, Direction>;
 
-/**
- * Action Creators - Versi Modern
- * Menggunakan arrow functions untuk sintaks yang lebih ramping.
- */
 
 export const startLevel = (map: LevelMap): GameAction => ({
   type: ActionTypes.START_LEVEL,

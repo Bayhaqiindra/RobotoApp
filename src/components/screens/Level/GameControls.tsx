@@ -5,46 +5,54 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { gameActions, settingsSelectors, RootState } from '../../../state';
 
-/**
- * Komponen GameControls yang telah di-upgrade.
- * Menggunakan Hooks untuk efisiensi dan pembacaan kode yang lebih bersih.
- */
 export const GameControls: React.FC = () => {
   const dispatch = useDispatch();
 
-  // Mengambil state menggunakan Selector Hook
   const displayOnScreenControls = useSelector((state: RootState) => 
     settingsSelectors.displayOnScreenControls(state.settings)
   );
 
-  // Memoize fungsi dispatch agar referensi tetap stabil
   const moveForward = useCallback(() => dispatch(gameActions.moveForward()), [dispatch]);
   const moveBackward = useCallback(() => dispatch(gameActions.moveBackward()), [dispatch]);
   const turnLeft = useCallback(() => dispatch(gameActions.turnLeft()), [dispatch]);
   const turnRight = useCallback(() => dispatch(gameActions.turnRight()), [dispatch]);
 
   useEffect(() => {
+    // Mapping tombol keyboard (menambahkan Arrow Keys agar lebih user-friendly)
     const keyMapping: Record<string, () => void> = {
       W: moveForward,
+      ARROWUP: moveForward,
       A: turnLeft,
+      ARROWLEFT: turnLeft,
       S: moveBackward,
+      ARROWDOWN: moveBackward,
       D: turnRight,
+      ARROWRIGHT: turnRight,
     };
 
-    const onKeyPress = (event: KeyboardEvent) => {
+    const onKeyDown = (event: KeyboardEvent) => {
       const key = event.key.toUpperCase();
+      
       if (key in keyMapping) {
+        // Mencegah halaman scroll otomatis saat menekan tombol panah
+        if (key.startsWith('ARROW')) {
+          event.preventDefault();
+        }
         keyMapping[key]();
       }
     };
 
-    window.addEventListener('keydown', onKeyPress); // Menggunakan keydown karena keypress deprecated
-    return () => window.removeEventListener('keydown', onKeyPress);
+    // PENTING: Gunakan 'keydown' pada window
+    window.addEventListener('keydown', onKeyDown);
+    
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [moveForward, moveBackward, turnLeft, turnRight]);
 
-  if (!displayOnScreenControls) return null;
-
-  return (
+  // Meskipun kontrol visual disembunyikan, keyboard tetap harus berfungsi
+  // Jadi kita hanya me-return null untuk render visualnya saja
+  const controlsUI = (
     <Wrapper>
       <Box align="center">
         <IconButton icon={<LinkUp />} title="Move forward (W)" onClick={moveForward} />
@@ -56,9 +64,10 @@ export const GameControls: React.FC = () => {
       </Box>
     </Wrapper>
   );
+
+  return displayOnScreenControls ? controlsUI : null;
 };
 
-// Sub-komponen dengan Typing yang lebih eksplisit
 interface IconButtonProps {
   icon: React.ReactElement;
   title: string;
@@ -69,7 +78,6 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, title, onClick }) => (
   <Button icon={icon} title={title} onClick={onClick} plain={false} margin="xxsmall" />
 );
 
-// Styling
 const Wrapper = styled.div`
   position: fixed;
   bottom: 0.5rem;

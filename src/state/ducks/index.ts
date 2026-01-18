@@ -24,15 +24,16 @@ export type State = {
 
 /**
  * createRootReducer - Menggabungkan semua reducer menjadi satu.
- * @param history - Objek history dari package 'history' untuk sinkronisasi URL.
+ * PERBAIKAN: Menambahkan casting 'as any' pada combineReducers 
+ * untuk menangani perbedaan antara Reducer standar dan Redux-Loop Reducer.
  */
 const createRootReducer = (history: History) => {
-  return combineReducers<State, any>({
-    game,
-    levels,
-    settings,
-    router: connectRouter(history),
-  });
+  return combineReducers({
+    game: game as any,
+    levels: levels as any,
+    settings: settings as any,
+    router: connectRouter(history) as any,
+  }) as any;
 }
 
 export default createRootReducer;

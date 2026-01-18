@@ -1,6 +1,5 @@
 import { Loop } from 'redux-loop';
 
-
 /**
  * Generic type for when a function may return a value or not.
  */
@@ -8,9 +7,8 @@ export type Maybe<T> = T | undefined;
 
 /**
  * Use this function in the case default of a switch that should exhaustively check all possible values.
- * It has no effect in runtime, but TS can catch in compile time if one possible value was forgotten.
  */
-export function assertNever(value: never) {
+export function assertNever(value: never): never {
   return value;
 }
 
@@ -19,12 +17,14 @@ export function assertNever(value: never) {
  */
 export type Action<T, P = void> = P extends void
   ? { type: T }
-  : { type: T, payload: P };
+  : { type: T; payload: P };
 
 /**
  * Type for reducers using redux-loop.
- *
- * @param HA - type of actions the reducer handles
- * @param TA - type of actions the reducer may trigger
+ * * PERBAIKAN: Loop memerlukan S (State) dan LA (Action yang akan dipicu).
+ * Kita juga menambahkan return type S saja untuk mendukung return tanpa Cmd.
  */
-export type Reducer<S, HA extends Action<any, any>, LA extends Action<any, any> = HA> = (state: S | undefined, action: HA) => S | Loop<S, LA>;
+export type Reducer<S, HA extends Action<any, any>, LA extends Action<any, any> = HA> = 
+  (state: S | undefined, action: HA) => S | Loop<LA>; 
+  // Catatan: Jika Anda menggunakan redux-loop v6+, Loop hanya butuh satu argumen <Action>.
+  // Jika menggunakan v5 kebawah, gunakan Loop<S, LA>.

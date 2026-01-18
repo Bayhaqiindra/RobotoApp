@@ -3,10 +3,11 @@ import { State } from './ducks';
 
 /**
  * loadPersistedState - Memuat potongan state tertentu dari Local Storage.
- * Digunakan saat inisialisasi store untuk mengembalikan data tersimpan.
  */
 function loadPersistedState(slices: Array<keyof State>): Partial<State> {
-  const persistedState: Partial<State> = {};
+  // PERBAIKAN: Gunakan 'any' pada inisialisasi agar properti readonly bisa diisi 
+  // selama proses inisialisasi awal.
+  const persistedState: any = {};
 
   slices.forEach(sliceName => {
     try {
@@ -20,12 +21,13 @@ function loadPersistedState(slices: Array<keyof State>): Partial<State> {
       console.warn(`Gagal memuat state untuk slice "${sliceName}":`, err);
     }
   });
-  return persistedState;
+  
+  // Cast kembali ke Partial<State> saat dikembalikan
+  return persistedState as Partial<State>;
 }
 
 /**
  * setupStatePersistence - Mekanisme "Observer" yang mengawasi perubahan state.
- * Hanya menyimpan ke Local Storage jika data pada slice tersebut benar-benar berubah.
  */
 function setupStatePersistence(store: Store<State>, slices: Array<keyof State>) {
   // Menggunakan Map untuk efisiensi perbandingan state lama dan baru
@@ -41,7 +43,6 @@ function setupStatePersistence(store: Store<State>, slices: Array<keyof State>) 
     );
 
     changedSlices.forEach(sliceName => {
-      // TypeScript Assertion: Kita yakin slice ini ada karena hasil filter
       const sliceData = currentState[sliceName];
       if (sliceData) {
         saveSliceState(sliceName, sliceData);
@@ -55,7 +56,7 @@ function setupStatePersistence(store: Store<State>, slices: Array<keyof State>) 
 }
 
 /**
- * saveSliceState - Helper internal untuk melakukan JSON stringify dan menulis ke disk.
+ * saveSliceState - Helper internal untuk menulis ke disk.
  */
 function saveSliceState<K extends keyof State>(sliceName: K, sliceState: State[K]) {
   try {

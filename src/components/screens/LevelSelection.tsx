@@ -7,9 +7,6 @@ import { getLevelNames } from '../../levels';
 import { levelsSelectors, RootState } from '../../state';
 import Screen from '../Screen';
 
-/**
- * LevelSelection - Versi Kompatibel v5
- */
 export const LevelSelection: React.FC = () => {
   // v5 menggunakan useHistory sebagai pengganti useNavigate
   const history = useHistory();
