@@ -6,43 +6,52 @@ import CameraControls from './CameraControls';
 import Map from './Map';
 
 /**
- * MyCanvas - Versi Modern
- * Mengintegrasikan React Three Fiber dengan Redux Store.
+ * MyCanvas - Lightweight Enhanced Version
  */
 export const MyCanvas: React.FC = () => {
-  // Mengambil instance store secara langsung menggunakan hook
   const store = useStore();
 
   return (
     <Canvas
-      shadows // Properti 'shadowMap' sekarang diganti menjadi 'shadows'
-      camera={{ fov: 75 }} // Definisi kamera opsional tapi disarankan
+      shadows
+      camera={{ 
+        fov: 60, 
+        position: [8, 8, 8],
+        near: 0.1,
+        far: 1000
+      }}
       style={{
-        backgroundColor: 'black',
+        background: 'linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%)',
         height: '100%',
         position: 'absolute',
         top: 0,
         left: 0,
       }}
     >
-      {/* Menjembatani Provider agar State Redux bisa diakses di dalam elemen Canvas */}
       <Provider store={store}>
         <CameraControls />
         
         <group rotation={[-Math.PI / 2, 0, 0]}>
-
-          <ambientLight intensity={0.4} />
+          {/* Ambient Light - cahaya dasar */}
+          <ambientLight intensity={0.4} color="#b0c4de" />
           
-          <spotLight
-            color={new Color('#fffda7')}
+          {/* Main directional light dengan shadow */}
+          <directionalLight
+            color={new Color('#ffffff')}
             castShadow
-            intensity={1.5} // Intensitas di versi terbaru seringkali butuh penyesuaian lebih tinggi
-            penumbra={1}
-            decay={2} // Nilai decay default Three.js sekarang adalah 2
-            angle={Math.PI / 8}
+            intensity={1.2}
             position={[10, 10, 10]}
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
+            shadow-camera-near={0.5}
+            shadow-camera-far={50}
+          />
+          
+          {/* Fill light dari samping */}
+          <directionalLight
+            color="#6a9bd8"
+            intensity={0.5}
+            position={[-5, 5, -5]}
           />
 
           <Map />
