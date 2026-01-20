@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import useSound from 'use-sound';
 
-// 1. Tambahkan playSuccess ke dalam Interface
 interface AudioContextType {
   playClick: () => void;
-  playSuccess: () => void; // Fungsi baru untuk suara menang
+  playSuccess: () => void;
+  playRobot: () => void; // 1. Tambahkan ke Interface
   startAudio: () => void;
 }
 
@@ -13,23 +13,25 @@ const AudioContext = createContext<AudioContextType | null>(null);
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Background Music (BGM)
   const [playBgm, { stop: stopBgm }] = useSound('/sounds/backsound.mp3', {
     volume: 0.3,
     loop: true,
     preload: true,
   });
 
-  // Sound Effect (SFX) Klik
   const [playClick] = useSound('/sounds/click.mp3', {
     volume: 0.6,
     preload: true,
   });
 
-  // 2. Setup Sound Effect (SFX) Menang
-  // File: public/sounds/success.mp3
-  const [playSuccess] = useSound('/sounds/success.mp3', {
-    volume: 0.7, // Sedikit lebih keras untuk efek selebrasi
+  const [playSuccess] = useSound('/sounds/succes.mp3', {
+    volume: 0.7,
+    preload: true,
+  });
+
+  // 2. Setup SFX Robot (Pastikan nama file sesuai: robot.wav)
+  const [playRobot] = useSound('/sounds/robot.wav', {
+    volume: 0.5,
     preload: true,
   });
 
@@ -45,8 +47,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [stopBgm]);
 
   return (
-    // 3. Masukkan playSuccess ke dalam Provider
-    <AudioContext.Provider value={{ playClick, playSuccess, startAudio }}>
+    // 3. Masukkan playRobot ke dalam Provider value
+    <AudioContext.Provider value={{ playClick, playSuccess, playRobot, startAudio }}>
       <div 
         onClick={startAudio} 
         style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}

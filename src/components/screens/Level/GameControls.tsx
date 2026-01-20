@@ -4,6 +4,7 @@ import { LinkDown, LinkUp, RotateLeft, RotateRight } from 'grommet-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import { gameActions, settingsSelectors, RootState } from '../../../state';
+import { useAudio } from '../../AudioProvider';
 
 // Animasi smooth dan minimal
 const pressAnimation = keyframes`
@@ -31,6 +32,7 @@ const subtleGlow = keyframes`
 export const GameControls: React.FC = () => {
   const dispatch = useDispatch();
   const [activeKey, setActiveKey] = useState<string | null>(null);
+  const { playRobot } = useAudio();
 
   const displayOnScreenControls = useSelector((state: RootState) => 
     settingsSelectors.displayOnScreenControls(state.settings)
@@ -39,26 +41,30 @@ export const GameControls: React.FC = () => {
   const moveForward = useCallback(() => {
     dispatch(gameActions.moveForward());
     setActiveKey('forward');
+    playRobot();
     setTimeout(() => setActiveKey(null), 150);
-  }, [dispatch]);
+  }, [dispatch, playRobot]);
 
   const moveBackward = useCallback(() => {
     dispatch(gameActions.moveBackward());
     setActiveKey('backward');
+     playRobot();
     setTimeout(() => setActiveKey(null), 150);
-  }, [dispatch]);
+  }, [dispatch, playRobot]);
 
   const turnLeft = useCallback(() => {
     dispatch(gameActions.turnLeft());
     setActiveKey('left');
+     playRobot();
     setTimeout(() => setActiveKey(null), 150);
-  }, [dispatch]);
+  }, [dispatch, playRobot]);
 
   const turnRight = useCallback(() => {
     dispatch(gameActions.turnRight());
     setActiveKey('right');
+     playRobot();
     setTimeout(() => setActiveKey(null), 150);
-  }, [dispatch]);
+  }, [dispatch, playRobot]);
 
   useEffect(() => {
     const keyMapping: Record<string, () => void> = {

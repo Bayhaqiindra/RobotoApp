@@ -97,10 +97,20 @@ export const LevelClearedDialog: React.FC = () => {
     levelsSelectors.getNextLevel(state.levels)
   );
 
-  // --- LOGIKA SUARA OTOMATIS ---
   useEffect(() => {
-    // Memainkan suara kemenangan begitu dialog ini muncul
-    playSuccess();
+    console.log("Dialog Muncul - Mencoba membunyikan suara...");
+    
+    // Beri sedikit jeda 100ms agar browser siap
+    const timer = setTimeout(() => {
+      try {
+        playSuccess();
+        console.log("Suara dimainkan");
+      } catch (error) {
+        console.error("Gagal memutar suara:", error);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [playSuccess]);
 
   const isGameFinished = nextLevel === undefined;
