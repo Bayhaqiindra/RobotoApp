@@ -140,7 +140,7 @@ const MenuComponent: React.FC<RouteComponentProps> = ({ history }) => {
         <TitleBlock>
           <BrandTitle>ROBOTO</BrandTitle>
           <Subtitle>
-            PECAHKAN PUZZLE, SELESAIKAN MISI
+            LOGIKA TEPAT, MISI TAMAT
           </Subtitle>
         </TitleBlock>
 
