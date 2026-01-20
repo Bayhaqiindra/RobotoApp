@@ -4,12 +4,8 @@ import { Button } from 'grommet';
 import { Refresh } from 'grommet-icons';
 import styled from 'styled-components';
 import { levelsActions, levelsSelectors, RootState } from '../../../state';
-/* Impor useAudio dari context global */
 import { useAudio } from '../../AudioProvider'; 
 
-/**
- * RestartButton - Versi Glassmorphism Modern
- */
 const StyledGlassButton = styled(Button)`
   display: flex;
   align-items: center;
@@ -62,7 +58,6 @@ const Wrapper = styled.div`
 
 export const RestartButton: React.FC = () => {
   const dispatch = useDispatch();
-  /* Ambil fungsi playClick dari global AudioProvider */
   const { playClick } = useAudio();
 
   const level = useSelector((state: RootState) => 
@@ -70,7 +65,7 @@ export const RestartButton: React.FC = () => {
   );
 
   const handleRestart = () => {
-    playClick(); // Mainkan suara klik saat restart
+    playClick(); 
     dispatch(levelsActions.selectLevel(level));
   };
 
