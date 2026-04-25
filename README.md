@@ -1,7 +1,7 @@
 # 🤖 ROBOTO - Edukasi Logika & Puzzle
 
 
-**ROBOTO** adalah sebuah game edukasi berbasis web yang dirancang untuk melatih kemampuan logika dan pemecahan masalah melalui mekanik puzzle 3D yang interaktif. Pemain akan mengontrol sebuah robot untuk menyelesaikan berbagai misi cerdas di luar angkasa.
+**ROBOTO** adalahh sebuah game edukasi berbasis web yang dirancang untuk melatih kemampuan logika dan pemecahan masalah melalui mekanik puzzle 3D yang interaktif. Pemain akan mengontrol sebuah robot untuk menyelesaikan berbagai misi cerdas di luar angkasa.
 
 ---
 
